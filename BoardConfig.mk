@@ -4,62 +4,64 @@
 # Copyright (C) 2022 The OrangeFox Recovery Project
 #
 
-DEVICE_PATH := device/xiaomi/alioth
+DEVICE_PATH := device/xiaomi/veux
 
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-2a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
-TARGET_CPU_VARIANT := cortex-a76
-TARGET_CPU_VARIANT_RUNTIME := kryo585
+TARGET_CPU_VARIANT := cortex-a75
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-2a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a55
-TARGET_2ND_CPU_VARIANT_RUNTIME := kryo585
+
+TARGET_SUPPORTS_64_BIT_APPS := true
+ENABLE_CPUSETS := true
+ENABLE_SCHEDBOOST := true
 
 TARGET_USES_64_BIT_BINDER := true
 
 # Bootloader
-TARGET_BOOTLOADER_BOARD_NAME := kona
+TARGET_PRODUCT_PLATFORM := holi
+TARGET_BOOTLOADER_BOARD_NAME := holi
 TARGET_NO_BOOTLOADER := true
+TARGET_USES_UEFI := true
 
 # Platform
-BOARD_USES_QCOM_HARDWARE := true
-TARGET_BOARD_PLATFORM := kona
-TARGET_BOARD_PLATFORM_GPU := qcom-adreno650
+TARGET_BOARD_PLATFORM := holi
+TARGET_BOARD_PLATFORM_GPU := qcom-adreno619
+QCOM_BOARD_PLATFORMS += holi
 BOARD_VENDOR := xiaomi
 
 # Kernel
+BOARD_KERNEL_CMDLINE := "ttyMSM0,115200n8 \
+						earlycon=msm_geni_serial,0xa90000 \
+						androidboot.hardware=qcom \
+						androidboot.console=ttyMSM0 \
+						androidboot.memcg=1 \
+						lpm_levels.sleep_disabled=1 \
+						video=vfb:640x400,bpp=32,memsize=3072000 \
+						msm_rtb.filter=0x237 \
+						service_locator.enable=1 \
+						swiotlb=2048 \
+						androidboot.usbcontroller=a600000.dwc3 \
+						androidboot.selinux=permissive"
+						
+BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_BOOT_HEADER_VERSION := 3
 BOARD_KERNEL_PAGESIZE := 4096
-
 BOARD_KERNEL_BASE          := 0x00000000
 BOARD_RAMDISK_OFFSET       := 0x02000000
 BOARD_KERNEL_TAGS_OFFSET   := 0x00000100
 BOARD_DTB_OFFSET           := 0x01f00000
 BOARD_KERNEL_OFFSET        := 0x00008000
-
-BOARD_KERNEL_IMAGE_NAME := Image
-
-VENDOR_CMDLINE := "console=ttyMSM0,115200n8 \
-		androidboot.hardware=qcom \
-		androidboot.console=ttyMSM0 \
-		androidboot.memcg=1 \
-		lpm_levels.sleep_disabled=1 \
-		video=vfb:640x400,bpp=32,memsize=3072000 \
-		msm_rtb.filter=0x237 \
-		service_locator.enable=1 \
-		androidboot.usbcontroller=a600000.dwc3 \
-		swiotlb=2048 \
-		loop.max_part=7 \
-		cgroup.memory=nokmem,nosocket \
-		reboot=panic_warm \
-		androidboot.init_fatal_reboot_target=recovery"
-
+TARGET_KERNEL_ARCH := arm64
+BOARD_INCLUDE_RECOVERY_DTBO := true
+BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
 BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
@@ -71,39 +73,17 @@ BOARD_MKBOOTIMG_ARGS += --dtb_offset $(BOARD_DTB_OFFSET)
 # Kernel
 # -----------------------------------------------------
 KERNEL_PATH := $(DEVICE_PATH)/prebuilt
-
-# whether to do an inline build of the kernel sources
-ifeq ($(FOX_BUILD_FULL_KERNEL_SOURCES),1)
-    TARGET_KERNEL_SOURCE := kernel/xiaomi/alioth
-    TARGET_KERNEL_CONFIG := vendor/alioth-fox_defconfig
-    TARGET_KERNEL_CLANG_COMPILE := true
-    KERNEL_SUPPORTS_LLVM_TOOLS := true
-    TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-gnu-
-    # clang-r383902 = 11.0.1; clang-r416183b = 12.0.5; clang-r416183b1 = 12.0.7;
-    # clang_13.0.0 (proton-clang 13.0.0, symlinked into prebuilts/clang/host/linux-x86/clang_13.0.0); clang-13+ is needed for Arrow-12.1 kernel sources
-    TARGET_KERNEL_CLANG_VERSION := 13.0.0
-    TARGET_KERNEL_CLANG_PATH := $(shell pwd)/prebuilts/clang/host/linux-x86/clang-$(TARGET_KERNEL_CLANG_VERSION)
-    TARGET_KERNEL_ADDITIONAL_FLAGS := DTC_EXT=$(shell pwd)/prebuilts/misc/$(HOST_OS)-x86/dtc/dtc
-else
-    TARGET_PREBUILT_KERNEL := $(KERNEL_PATH)/Image
-    TARGET_PREBUILT_KERNEL := $(KERNEL_PATH)/Image.gz-dtb
-    BOARD_PREBUILT_DTBOIMAGE := $(KERNEL_PATH)/dtbo.img
-#    BOARD_PREBUILT_DTBIMAGE_DIR := $(KERNEL_PATH)/dtbs
-#    BOARD_INCLUDE_RECOVERY_DTBO := true
-#    BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-endif
+BOARD_PREBUILT_DTBIMAGE_DIR := $(DEVICE_PATH)/prebuilt
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
+BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
+BOARD_PREBUILT_DTBIMAGE_DIR := $(DEVICE_PATH)/prebuilt/dtb.img
 # -----------------------------------------------------
-
-# 12.1 manifest requirements
-TARGET_SUPPORTS_64_BIT_APPS := true
-BUILD_BROKEN_DUP_RULES := true
-BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
-BUILD_BROKEN_MISSING_REQUIRED_MODULES := true # may not really be needed
 
 #A/B
 BOARD_USES_RECOVERY_AS_BOOT := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
 AB_OTA_UPDATER := true
+TARGET_OTA_ASSERT_DEVICE := veux,veux_in,veux_p_in,veux_global,peux_in,peux,peux_p_in
 
 # Metadata
 BOARD_USES_METADATA_PARTITION := true
@@ -112,13 +92,13 @@ TARGET_USERIMAGES_USE_F2FS := true
 
 # Partitions
 BOARD_FLASH_BLOCK_SIZE := 262144 
-BOARD_BOOTIMAGE_PARTITION_SIZE := 201326592
+BOARD_BOOTIMAGE_PARTITION_SIZE := 134217728
 BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE:= 100663296
 
-BOARD_SUPER_PARTITION_SIZE := 6536585216
-BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 6532390912
+BOARD_SUPER_PARTITION_SIZE := 9126805504
 BOARD_SUPER_PARTITION_GROUPS := qti_dynamic_partitions
-BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := system product odm system_ext vendor
+BOARD_QTI_DYNAMIC_PARTITIONS_SIZE := 9126805504
+BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST := product vendor system system_ext odm
 
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_COPY_OUT_VENDOR := vendor
@@ -132,29 +112,16 @@ TARGET_USES_MKE2FS := true
 
 # AVB
 BOARD_AVB_ENABLE := true
-BOARD_AVB_VBMETA_SYSTEM := system
-BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
-BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
+BOARD_AVB_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
+BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --set_hashtree_disabled_flag
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
 
-# TWRP specific build flags
-TW_THEME := portrait_hdpi
-RECOVERY_SDCARD_ON_DATA := true
-TARGET_RECOVERY_QCOM_RTC_FIX := true
-TW_EXCLUDE_DEFAULT_USB_INIT := true
-TW_EXTRA_LANGUAGES := true
-TW_INCLUDE_NTFS_3G := true
-TW_USE_TOOLBOX := true
-TW_INCLUDE_RESETPROP := true
-TW_INCLUDE_REPACKTOOLS := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
-TW_DEFAULT_BRIGHTNESS := 750
-TWRP_INCLUDE_LOGCAT := true
-TARGET_USES_LOGD := true
-TARGET_USES_MKE2FS := true
-TW_NO_SCREEN_BLANK := true
-TW_EXCLUDE_APEX := true
-TW_SUPPORT_INPUT_AIDL_HAPTICS := true
-#
+# 12.1 manifest requirements
+TARGET_SUPPORTS_64_BIT_APPS := true
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_MISSING_REQUIRED_MODULES := true

@@ -17,7 +17,7 @@
 #
 # 	Please maintain this if you use this script or any part of it
 #
-FDEVICE="alioth"
+FDEVICE="veux"
 
 fox_get_target_device() {
 local chkdev=$(echo "$BASH_SOURCE" | grep -w \"$FDEVICE\")
@@ -36,19 +36,20 @@ fi
 if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" ]; then
 	export FOX_VARIANT="A12"
 	export OF_USE_GREEN_LED=0
-        export FOX_ENABLE_APP_MANAGER=1
-        export OF_IGNORE_LOGICAL_MOUNT_ERRORS=1
+    export FOX_ENABLE_APP_MANAGER=1
+    export OF_IGNORE_LOGICAL_MOUNT_ERRORS=1
    	export TW_DEFAULT_LANGUAGE="en"
 	export LC_ALL="C"
  	export ALLOW_MISSING_DEPENDENCIES=true
-	export TARGET_DEVICE_ALT="aliothin"
-	export OF_TARGET_DEVICES="aliothin,alioth"
+	export TARGET_DEVICE_ALT="veux"
+	export OF_TARGET_DEVICES="veux"
 	export OF_VIRTUAL_AB_DEVICE=1
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
 	export OF_USE_MAGISKBOOT_FOR_ALL_PATCHES=1
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=1
+	export OF_NO_MIUI_PATCH_WARNING=1
 	export FOX_USE_BASH_SHELL=1
 	export FOX_ASH_IS_BASH=1
 	export FOX_USE_TAR_BINARY=1
@@ -64,6 +65,10 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" ]; then
 	# use magisk 25.1 for the magisk addon
 	export FOX_USE_SPECIFIC_MAGISK_ZIP=~/Magisk/Magisk-v25.1.zip
 
+        export OF_KEEP_DM_VERITY=1
+        export OF_SUPPORT_ALL_BLOCK_OTA_UPDATES=1
+        export OF_FIX_OTA_UPDATE_MANUAL_FLASH_ERROR=1
+        export OF_DISABLE_MIUI_OTA_BY_DEFAULT=1
 	# screen settings
 	export OF_SCREEN_H=2400
 	export OF_STATUS_H=100
@@ -83,7 +88,7 @@ if [ "$1" = "$FDEVICE" -o "$FOX_BUILD_DEVICE" = "$FDEVICE" ]; then
 
 	# no special MIUI stuff
         export OF_VANILLA_BUILD=1
-	export OF_NO_MIUI_PATCH_WARNING=1
+
 
 	# full size
 	export OF_DYNAMIC_FULL_SIZE=9126805504

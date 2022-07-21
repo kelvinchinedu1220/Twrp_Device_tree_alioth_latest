@@ -6,6 +6,6 @@
 
 LOCAL_PATH := $(call my-dir)
 
-ifneq ($(filter alioth,$(TARGET_DEVICE)),)
+ifeq ($(TARGET_DEVICE),veux)
 include $(call all-makefiles-under,$(LOCAL_PATH))
 endif
