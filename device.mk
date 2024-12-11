@@ -5,7 +5,7 @@
 #
 
 # Display
-LOCAL_PATH := device/xiaomi/veux
+LOCAL_PATH := device/xiaomi/alioth
 
 # Enable project quotas and casefolding for emulated storage without sdcardfs
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
@@ -30,7 +30,7 @@ PRODUCT_SOONG_NAMESPACES += \
 PRODUCT_SHIPPING_API_LEVEL := 30
 
 # Assert
-TARGET_OTA_ASSERT_DEVICE := veux,peux
+TARGET_OTA_ASSERT_DEVICE := alioth
 
 TARGET_COPY_OUT_VENDOR := vendor
 
