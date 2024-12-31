@@ -4,7 +4,7 @@
 # Copyright (C) 2022 The OrangeFox Recovery Project
 #
 
-DEVICE_PATH := device/xiaomi/veux
+DEVICE_PATH := device/xiaomi/alioth
 
 # Architecture
 TARGET_ARCH := arm64
@@ -26,15 +26,14 @@ ENABLE_SCHEDBOOST := true
 TARGET_USES_64_BIT_BINDER := true
 
 # Bootloader
-TARGET_PRODUCT_PLATFORM := holi
-TARGET_BOOTLOADER_BOARD_NAME := holi
+TARGET_BOOTLOADER_BOARD_NAME := kona
 TARGET_NO_BOOTLOADER := true
 TARGET_USES_UEFI := true
 
 # Platform
-TARGET_BOARD_PLATFORM := holi
-TARGET_BOARD_PLATFORM_GPU := qcom-adreno619
-QCOM_BOARD_PLATFORMS += holi
+BOARD_USES_QCOM_HARDWARE := true
+TARGET_BOARD_PLATFORM := kona
+TARGET_BOARD_PLATFORM_GPU := qcom-adreno650
 BOARD_VENDOR := xiaomi
 
 # Kernel
